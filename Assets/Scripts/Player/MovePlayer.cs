@@ -37,9 +37,22 @@ public class MovePlayer : MonoBehaviour
     void myInput(){
         movInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
+<<<<<<< Updated upstream
         if(Input.GetKeyDown(KeyCode.LeftShift) && movInput != Vector2.zero)
             if(dashCharges > 0)
                 isDashing = true;
+=======
+        if(Input.GetKeyDown(KeyCode.Space) && isGrounded){
+            velocity.y = Mathf.Sqrt(jumpForce * -2f * g);
+        }
+
+        if(Input.GetKeyDown(KeyCode.LeftShift) && movInput != Vector2.zero){
+            if(dashCharges > 0){
+                dashCharges -= 1;
+                dashTimeCounter = dashTime;
+            }
+        }
+>>>>>>> Stashed changes
         
         // if(Input.GetKeyDown(KeyCode.Space) && isGrounded){
         //     jump = true;
