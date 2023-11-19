@@ -16,8 +16,8 @@ public class MovePlayer : MonoBehaviour
     [SerializeField] private int maxDashCharges = 2;
     private int dashCharges = 2;
     [SerializeField] private float dashCooldown = 2.5f;
-    private float dashCooldownCounter = 0f;
-
+        private float dashCooldownCounter = 0f;
+    
     [Header("Jumping")]
     [SerializeField] private float jumpForce = 20f;
 
@@ -28,7 +28,7 @@ public class MovePlayer : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
 
-
+    
     void Start(){
         playerController = GetComponent<CharacterController>();
         dashCharges = maxDashCharges;
@@ -46,8 +46,8 @@ public class MovePlayer : MonoBehaviour
                 dashCharges -= 1;
                 dashTimeCounter = dashTime;
             }
-        
-    }
+                
+            }
 
     void Update()
     {
