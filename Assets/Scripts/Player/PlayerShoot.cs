@@ -7,11 +7,10 @@ using UnityEngine;
 public class PlayerShoot : MonoBehaviour
 {
     [SerializeField] private GunTemplate gun;
-    [SerializeField] private float shootingSpeed = 1f;
     private bool isShooting = false;
     [SerializeField] private float critMultiplier = 2f;
     private float cooldownCounter = 0f;
-
+    public bool isOnMenu;
     public GameObject bullet;
     public Transform gunEnd;
     private Vector3 shotDirection;
@@ -27,9 +26,9 @@ public class PlayerShoot : MonoBehaviour
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            if(cooldownCounter <= 0 && !isShooting){
+            if(cooldownCounter <= 0 && !isShooting && !isOnMenu){
                 isShooting = true;
-                cooldownCounter = shootingSpeed;
+                cooldownCounter = gun.fireRate;
 
                 gun.bulletsLeft = gun.bulletsPerShot;
 
@@ -73,10 +72,15 @@ public class PlayerShoot : MonoBehaviour
         gun.ammo--;
         gun.bulletsLeft--;
         if(gun.bulletsLeft > 0 && gun.ammo > 0){
-            Invoke("Shoot", gun.fireRate);
+            Invoke("Shoot", gun.burstRate);
         }
         else if(gun.bulletsLeft == 0){
             isShooting = false;
         }
+    }
+
+    public void ChangeWeapon(GunTemplate newGun)
+    {
+        gun = newGun;
     }
 }
