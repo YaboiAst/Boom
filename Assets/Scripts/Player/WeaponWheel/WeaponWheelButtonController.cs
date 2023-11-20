@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WeaponWheelButtonController : MonoBehaviour
 {
     public int id;
     public string itemName;
+    public GunTemplate gun;
     public TextMeshProUGUI itemText;
     public Image selectedItem;
     public Sprite icon;
@@ -27,6 +28,7 @@ public class WeaponWheelButtonController : MonoBehaviour
     {
         selected = true;
         // selectedItem = icon;
+        weaponWheelController.ChangeWeapon(gun);
         itemText.text = itemName;
         weaponWheelController.Deselect();
     }

@@ -11,6 +11,7 @@ public class WeaponWheelController : MonoBehaviour
     public Sprite noImage;
     public static int weaponID;
 
+    [SerializeField] PlayerShoot playerShoot;
     public MouseLook mouseLook;
 
     // Update is called once per frame
@@ -34,6 +35,7 @@ public class WeaponWheelController : MonoBehaviour
     public void Select()
     {
         mouseLook.enabled = false;
+        playerShoot.isOnMenu = true;
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
         animator.SetBool("weaponWheelSelected", true);
@@ -50,6 +52,12 @@ public class WeaponWheelController : MonoBehaviour
     public void UnlockLook()
     {
         mouseLook.enabled = true;
+        playerShoot.isOnMenu = false;
+    }
+
+    public void ChangeWeapon(GunTemplate newGun)
+    {
+        playerShoot.ChangeWeapon(newGun);
     }
 
 }
