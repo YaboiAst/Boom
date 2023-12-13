@@ -39,9 +39,9 @@ public class PlayerShoot : MonoBehaviour
             === SCOPED AIM ===
 
             TODO
-            - Fazer o crosshair escalar com o zoom
-            - Animação da arma mirando?
-            - UI da Scope? (Escurecer as bordas)
+            - Fazer o crosshair escalar com o zoom?
+            - Adicionar animação da arma mirando
+            - UI da Scope (Escurecer as bordas)
 
         */
         if(Input.GetKeyDown(KeyCode.Mouse1)){
