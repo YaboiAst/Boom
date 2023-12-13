@@ -54,15 +54,23 @@ public class PlayerShoot : MonoBehaviour
         }
 
         if(Input.GetKeyDown(KeyCode.Mouse0)){
+            Debug.Log("Counter: " + cooldownCounter);
+            Debug.Log(isShooting);
             if(cooldownCounter <= 0 && !isShooting){
-                isShooting = true;
-                cooldownCounter = shootingSpeed;
+                if(gun.magCurrentAmmo > 0){
+                    isShooting = true;
+                    cooldownCounter = shootingSpeed;
 
-                gun.bulletsLeft = gun.bulletsPerShot;
-
-                if(gun.ammo > 0){
+                    gun.bulletsLeft = gun.bulletsPerShot;
                     Shoot();
                 }
+            }
+        }
+
+        if(Input.GetKeyDown(KeyCode.R)){
+            // Play Reload Animation?
+            if(gun.totalAmmo > 0 && gun.magCurrentAmmo < gun.magTotalAmmo){
+                Invoke("Reload", 2f);
             }
         }
 
@@ -97,13 +105,24 @@ public class PlayerShoot : MonoBehaviour
             }
         }
 
-        gun.ammo--;
+        gun.magCurrentAmmo--;
         gun.bulletsLeft--;
-        if(gun.bulletsLeft > 0 && gun.ammo > 0){
+        if(gun.bulletsLeft > 0 && gun.magCurrentAmmo > 0){
             Invoke("Shoot", gun.fireRate);
         }
         else if(gun.bulletsLeft == 0){
             isShooting = false;
+        }
+    }
+
+    void Reload(){
+        if(gun.totalAmmo < gun.magTotalAmmo){
+            gun.magCurrentAmmo = gun.totalAmmo;
+            gun.totalAmmo = 0;
+        }
+        else{
+            gun.magCurrentAmmo = gun.magTotalAmmo;
+            gun.totalAmmo -= gun.magTotalAmmo;
         }
     }
 

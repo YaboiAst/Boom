@@ -6,7 +6,9 @@ using UnityEngine;
 [Serializable]
 public class GunTemplate
 {
-    public int ammo;
+    public int totalAmmo;
+    public int magTotalAmmo;
+    public int magCurrentAmmo;
     public float damagePerShot = 25f;
     public float projectileSpeed = 2f;
     public float fireRate = 1f;
