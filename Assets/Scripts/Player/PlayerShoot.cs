@@ -18,6 +18,8 @@ public class PlayerShoot : MonoBehaviour
     public Transform gunEnd;
     public GameObject bullet;
     private Vector3 shotDirection;
+    
+    public bool isOnMenu;
 
     [Header("Aim")]
     public Camera mainCam;
@@ -65,7 +67,7 @@ public class PlayerShoot : MonoBehaviour
 
         */
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            if(cooldownCounter <= 0 && !isShooting){
+            if(cooldownCounter <= 0 && !isShooting && !isOnMenu){
                 if(gun.magCurrentAmmo > 0){
                     isShooting = true;
                     cooldownCounter = shootingSpeed;
@@ -136,8 +138,7 @@ public class PlayerShoot : MonoBehaviour
 
         /* Burst */
         if(gun.bulletsLeft > 0 && gun.magCurrentAmmo > 0){
-            Invoke("Shoot", gun.fireRate);
-        }
+            Invoke("Shoot", gun.burstRate);
         else if(gun.bulletsLeft == 0){
             isShooting = false;
         }
@@ -174,5 +175,10 @@ public class PlayerShoot : MonoBehaviour
 
         if(isZooming || mainCam.fieldOfView == baseFOV) return;
         else Invoke("ZoomOut", 0.01f);
+    }
+    
+    public void ChangeWeapon(GunTemplate newGun)
+    {
+        gun = newGun;
     }
 }
