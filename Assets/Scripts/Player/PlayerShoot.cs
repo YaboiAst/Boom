@@ -9,14 +9,14 @@ public class PlayerShoot : MonoBehaviour
 {
     [Header("Gun Info")]
     [SerializeField] private GunTemplate gun;
-    [SerializeField] private float shootingSpeed = 1f;
-    private bool isShooting = false;
+    [SerializeField] private float shootingSpeed = 1f; // Passar isso para gunTemplate?
     [SerializeField] private float critMultiplier = 2f;
+    private bool isShooting = false;
     private float cooldownCounter = 0f;
 
     [Header("Shooting")]
-    public GameObject bullet;
     public Transform gunEnd;
+    public GameObject bullet;
     private Vector3 shotDirection;
 
     [Header("Aim")]
@@ -36,6 +36,8 @@ public class PlayerShoot : MonoBehaviour
     {
 
         /* 
+            === SCOPED AIM ===
+
             TODO
             - Fazer o crosshair escalar com o zoom
             - Animação da arma mirando?
@@ -53,9 +55,16 @@ public class PlayerShoot : MonoBehaviour
             //mainCam.fieldOfView = baseFOV;
         }
 
+        /*
+            === SHOOTING ===
+
+            TODO
+            - Atirar com o mouse segurado
+            - Reduzir o spread se estiver mirando (?)
+            - Atualizar HUD
+
+        */
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            Debug.Log("Counter: " + cooldownCounter);
-            Debug.Log(isShooting);
             if(cooldownCounter <= 0 && !isShooting){
                 if(gun.magCurrentAmmo > 0){
                     isShooting = true;
@@ -67,6 +76,15 @@ public class PlayerShoot : MonoBehaviour
             }
         }
 
+
+        /*
+            === RELOAD ===
+
+            TODO
+            - Adicionar animação de reload
+            - Atualizar HUD
+
+        */
         if(Input.GetKeyDown(KeyCode.R)){
             // Play Reload Animation?
             if(gun.totalAmmo > 0 && gun.magCurrentAmmo < gun.magTotalAmmo){
@@ -77,36 +95,46 @@ public class PlayerShoot : MonoBehaviour
         cooldownCounter -= Time.deltaTime;
     }
 
-    private void OnDrawGizmos() {
-        Gizmos.DrawRay(ray);    
-    }
+    // private void OnDrawGizmos() {
+    //     Gizmos.DrawRay(ray);    
+    // }
 
     Ray ray;
     void Shoot(){
+        /* Calcular Spread */
         float x = Random.Range(-gun.spread, gun.spread);
         float y = Random.Range(-gun.spread, gun.spread);
         Vector3 spreading = aim + new Vector3(x, y, 0f);
 
+        /* Calcular direção */
         shotDirection = mainCam.ScreenToWorldPoint(spreading) + mainCam.transform.forward * 100f - gunEnd.position;
+        
+        /* Resposta visual (temporário) */
         GameObject bul = Instantiate(bullet, gunEnd.position, transform.rotation);
         Destroy(bul, 5f);
         bul.GetComponent<Rigidbody>().AddForce(shotDirection * 1000f);
 
+        /* Raycast */
         ray = mainCam.ScreenPointToRay(spreading);
         RaycastHit hit;
         if(Physics.Raycast(ray, out hit)){
             if(hit.rigidbody != null){
                 EnemieAI enemy = hit.rigidbody.gameObject.GetComponent<EnemieAI>();
-                if(hit.collider.gameObject.tag == "Head"){
-                    Debug.Log("Headshot");
-                    enemy.TakeDamage(critMultiplier * gun.damagePerShot);
+                if(enemy != null){
+                    if(hit.collider.gameObject.tag == "Head"){
+                        Debug.Log("Headshot");
+                        enemy.TakeDamage(critMultiplier * gun.damagePerShot);
+                    }
+                    else enemy.TakeDamage(gun.damagePerShot);
                 }
-                else enemy.TakeDamage(gun.damagePerShot);
             }
         }
 
+        /* Atualiza munição */
         gun.magCurrentAmmo--;
         gun.bulletsLeft--;
+
+        /* Burst */
         if(gun.bulletsLeft > 0 && gun.magCurrentAmmo > 0){
             Invoke("Shoot", gun.fireRate);
         }
