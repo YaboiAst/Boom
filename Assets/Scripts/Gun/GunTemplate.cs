@@ -12,4 +12,5 @@ public class GunTemplate
     public float fireRate = 1f;
     public int bulletsPerShot = 1, bulletsLeft;
     public float spread;
+    public float zoomFOV = 60f;
 }
