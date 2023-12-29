@@ -54,8 +54,8 @@ public class HealthSystem : MonoBehaviour
         hud.OnUpdateHUD?.Invoke();
     }
 
+    /*TEMPORARY TEST CODE*/
     private void Update() {
-        /*TEMPORARY TEST CODE*/
         #if UNITY_EDITOR
         if(Input.GetKeyDown(KeyCode.Z)){ TakeDamage(10f);}
 
@@ -65,4 +65,13 @@ public class HealthSystem : MonoBehaviour
 
         #endif
     }
+
+    [ContextMenu("Take Damage")]
+    void TestTakeDamage(){ TakeDamage(10f); }
+
+    [ContextMenu("Get Health")]
+    void TestGetHealth(){ Heal(5f); }
+
+    [ContextMenu("Get Shield")]
+    void TestGetShield(){ Shield(10f); }
 }
