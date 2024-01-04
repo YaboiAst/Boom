@@ -27,6 +27,10 @@ public class PlayerShoot : MonoBehaviour
     private float baseFOV;
     private bool isZooming = false;
 
+    [Header("HUD")]
+    [SerializeField] private HUDContoller hud;
+    public GunTemplate GetGun(){return this.gun;}
+
     private void Start() {
         mainCam = GetComponentInChildren<Camera>();
         aim = new Vector3 (Screen.width / 2, Screen.height / 2, 0f);
@@ -136,8 +140,10 @@ public class PlayerShoot : MonoBehaviour
         gun.magCurrentAmmo--;
         gun.bulletsLeft--;
 
+        hud.OnUpdateHUD?.Invoke();
+
         /* Burst */
-        if(gun.bulletsLeft > 0 && gun.magCurrentAmmo > 0){
+        if(gun.bulletsLeft > 0 && gun.magCurrentAmmo > 0)
             Invoke("Shoot", gun.burstRate);
         else if(gun.bulletsLeft == 0){
             isShooting = false;
@@ -153,6 +159,7 @@ public class PlayerShoot : MonoBehaviour
             gun.magCurrentAmmo = gun.magTotalAmmo;
             gun.totalAmmo -= gun.magTotalAmmo;
         }
+        hud.OnUpdateHUD?.Invoke();
     }
 
     private void ZoomIn(){
