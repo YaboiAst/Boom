@@ -12,17 +12,21 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField] private float shootingSpeed = 1f; // Passar isso para gunTemplate?
     [SerializeField] private float critMultiplier = 2f;
     private bool isShooting = false;
+    private bool isReloading = false;
     private float cooldownCounter = 0f;
 
     [Header("Shooting")]
     public Transform gunEnd;
     public GameObject bullet;
     private Vector3 shotDirection;
+
+    [Header("Visual Effects")]
+    [SerializeField] private GameObject bloodParticles;
     
-    public bool isOnMenu;
+    [HideInInspector] public bool isOnMenu;
 
     [Header("Aim")]
-    public Camera mainCam;
+    private Camera mainCam;
     private Vector3 aim;
     private float baseFOV;
     private bool isZooming = false;
@@ -71,7 +75,7 @@ public class PlayerShoot : MonoBehaviour
 
         */
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            if(cooldownCounter <= 0 && !isShooting && !isOnMenu){
+            if(cooldownCounter <= 0 && !isShooting && !isReloading &&!isOnMenu){
                 if(gun.magCurrentAmmo > 0){
                     isShooting = true;
                     cooldownCounter = shootingSpeed;
@@ -91,9 +95,10 @@ public class PlayerShoot : MonoBehaviour
             - Atualizar HUD
 
         */
-        if(Input.GetKeyDown(KeyCode.R)){
+        if(Input.GetKeyDown(KeyCode.R) && !isShooting && !isOnMenu){
             // Play Reload Animation?
             if(gun.totalAmmo > 0 && gun.magCurrentAmmo < gun.magTotalAmmo){
+                isReloading = true;
                 Invoke("Reload", 2f);
             }
         }
@@ -132,6 +137,16 @@ public class PlayerShoot : MonoBehaviour
                         enemy.TakeDamage(critMultiplier * gun.damagePerShot);
                     }
                     else enemy.TakeDamage(gun.damagePerShot);
+
+                    GameObject bloodSplatter = Instantiate(bloodParticles, hit.point, Quaternion.identity);
+                    bloodSplatter.transform.LookAt(this.transform);
+                    Destroy(bloodSplatter, 5f);
+                }
+                else{
+                    Barrel barrel = hit.rigidbody.gameObject.GetComponent<Barrel>();
+                    if(barrel != null){
+                        barrel.Explode();
+                    }
                 }
             }
         }
@@ -159,6 +174,7 @@ public class PlayerShoot : MonoBehaviour
             gun.magCurrentAmmo = gun.magTotalAmmo;
             gun.totalAmmo -= gun.magTotalAmmo;
         }
+        isReloading = false;
         hud.OnUpdateHUD?.Invoke();
     }
 
