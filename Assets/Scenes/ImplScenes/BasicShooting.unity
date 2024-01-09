@@ -999,6 +999,7 @@ MonoBehaviour:
     bulletsPerShot: 1
     bulletsLeft: 0
     spread: 0
+    zoomFOV: 45
   shootingSpeed: 1
   critMultiplier: 2
   bullet: {fileID: 4897886130843630534, guid: ad0fd29165356108781e03de4edb75ae, type: 3}
