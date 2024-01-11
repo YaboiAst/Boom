@@ -7,7 +7,12 @@ public class HealthSystem : MonoBehaviour
     public float shield = 50f;
     private float health = 100f;
     public float maxHealth = 100f;
-
+    public float maxShield = 50f;
+    private float healthRegenTimer = 2f;
+    private float healthRegenCounter = 0f;
+    private bool isOnCombat = false;
+    private float shieldRegenSpeed = 30f;
+    private float healthRegenSpeed = 10f;
     [Header("HUD")]
     [SerializeField] private HUDContoller hud;
 
@@ -15,6 +20,8 @@ public class HealthSystem : MonoBehaviour
     public float GetShield(){return shield;}
 
     public void TakeDamage(float amount){
+        healthRegenCounter = 0f;
+        isOnCombat = true;
         if (shield > 0)
         {
             shield -= amount;
@@ -56,6 +63,21 @@ public class HealthSystem : MonoBehaviour
 
     /*TEMPORARY TEST CODE*/
     private void Update() {
+        if(healthRegenCounter < healthRegenTimer){
+            healthRegenCounter += Time.deltaTime;
+        }
+        else if(health < maxHealth){
+            health += Time.deltaTime * healthRegenSpeed;
+            if(health > maxHealth) health = maxHealth;
+            hud.OnUpdateHUD?.Invoke();
+        }
+        else if (shield < maxShield)
+        {
+            shield += Time.deltaTime * shieldRegenSpeed;
+            if (shield > maxShield) shield = maxShield;
+            hud.OnUpdateHUD?.Invoke();
+        }
+        
         #if UNITY_EDITOR
         if(Input.GetKeyDown(KeyCode.Z)){ TakeDamage(10f);}
 

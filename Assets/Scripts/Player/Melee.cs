@@ -27,6 +27,20 @@ public class Melee : MonoBehaviour
         }
     }
 
+    public void MeleeAtack()
+    {
+        Paw.SetActive(true);
+
+        Collider[] enemiesInMeleeRange = Physics.OverlapSphere(transform.position + transform.forward * meleeRange, meleeRange, whatIsEnemie);
+        foreach(Collider col in enemiesInMeleeRange){
+            col.gameObject.GetComponent<HealthSystem>().TakeDamage(meleeDamage);
+        }
+
+        Invoke("StopMelee", 1f);
+    }
+    
+    
+
     void StopMelee(){
         Paw.SetActive(false);
     }
