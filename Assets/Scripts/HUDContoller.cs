@@ -28,7 +28,7 @@ public class HUDContoller : MonoBehaviour
         StopAllCoroutines();
 
         float healthPercentage = playerHealth.GetHealth() / playerHealth.maxHealth;
-        float shieldPercentage = playerHealth.GetShield() / 50; // Change for max shield
+        float shieldPercentage = playerHealth.GetShield() / playerHealth.maxShield; // Change for max shield
 
         string ammo = playerAmmo.magCurrentAmmo.ToString() + " / " + playerAmmo.totalAmmo.ToString();
         float magPercentage = (float) playerAmmo.magCurrentAmmo / (float) playerAmmo.magTotalAmmo;
