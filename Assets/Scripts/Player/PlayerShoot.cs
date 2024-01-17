@@ -19,10 +19,12 @@ public class PlayerShoot : MonoBehaviour
     public Transform gunEnd;
     public GameObject bullet;
     private Vector3 shotDirection;
+    private bool shootInput;
+    private bool isReloading;
 
     [Header("Visual Effects")]
     [SerializeField] private GameObject bloodParticles;
-    
+
     [HideInInspector] public bool isOnMenu;
 
     [Header("Aim")]
@@ -74,8 +76,11 @@ public class PlayerShoot : MonoBehaviour
             - Atualizar HUD
 
         */
-        if(Input.GetKeyDown(KeyCode.Mouse0)){
-            if(cooldownCounter <= 0 && !isShooting && !isReloading &&!isOnMenu){
+        if(gun.canHoldFire) shootInput = Input.GetKey(KeyCode.Mouse0);
+        else shootInput = Input.GetKeyDown(KeyCode.Mouse0);
+
+        if(shootInput){
+            if(cooldownCounter <= 0 && !isShooting && !isOnMenu && !isReloading){
                 if(gun.magCurrentAmmo > 0){
                     isShooting = true;
                     cooldownCounter = shootingSpeed;
@@ -115,6 +120,10 @@ public class PlayerShoot : MonoBehaviour
         /* Calcular Spread */
         float x = Random.Range(-gun.spread, gun.spread);
         float y = Random.Range(-gun.spread, gun.spread);
+        if(isZooming){
+            x = 2*x/3;
+            y = 2*y/3;
+        }
         Vector3 spreading = aim + new Vector3(x, y, 0f);
 
         /* Calcular direção */
@@ -123,7 +132,7 @@ public class PlayerShoot : MonoBehaviour
         /* Resposta visual (temporário) */
         GameObject bul = Instantiate(bullet, gunEnd.position, transform.rotation);
         Destroy(bul, 5f);
-        bul.GetComponent<Rigidbody>().AddForce(shotDirection * 1000f);
+        bul.GetComponent<Rigidbody>().AddForce(shotDirection * gun.projectileSpeed);
 
         /* Raycast */
         ray = mainCam.ScreenPointToRay(spreading);
