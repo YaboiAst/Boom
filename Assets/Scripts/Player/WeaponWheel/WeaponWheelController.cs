@@ -12,6 +12,7 @@ public class WeaponWheelController : MonoBehaviour
     public static int weaponID;
 
     [SerializeField] PlayerShoot playerShoot;
+    [SerializeField] private HUDContoller hudContoller;
     public MouseLook mouseLook;
 
     // Update is called once per frame
@@ -58,6 +59,7 @@ public class WeaponWheelController : MonoBehaviour
     public void ChangeWeapon(GunTemplate newGun)
     {
         playerShoot.ChangeWeapon(newGun);
+        hudContoller.ChangeWeapon(newGun);
     }
 
 }

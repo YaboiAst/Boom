@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 public class HealthSystem : MonoBehaviour
 {
@@ -16,6 +18,20 @@ public class HealthSystem : MonoBehaviour
     [Header("HUD")]
     [SerializeField] private HUDContoller hud;
 
+    // Vignette postprocess
+    [SerializeField] PostProcessProfile profile;
+    private Vignette vignette;
+    private float vignetteTime = 0.3f;
+    private float vignetteTimer = 0f;
+    private bool fadingIn = false;
+    private bool fadingOut = false;
+
+    private void Start()
+    {
+        profile.TryGetSettings(out vignette);
+        vignette.intensity.value = 0f;
+    }
+
     public float GetHealth(){return health;}
     public float GetShield(){return shield;}
 
@@ -25,6 +41,7 @@ public class HealthSystem : MonoBehaviour
         if (shield > 0)
         {
             shield -= amount;
+            VignnetteEffect(0.3f, Color.blue);
             if (shield < 0)
             {
                 health += shield;
@@ -33,6 +50,7 @@ public class HealthSystem : MonoBehaviour
         }
         else
         {
+            VignnetteEffect(0.3f, Color.red);
             if(health - amount < 0){
                 health = 0;
             }
@@ -45,8 +63,11 @@ public class HealthSystem : MonoBehaviour
 
     private void Heal(float amount){
         if(health == maxHealth) return;
-        
-        if(health + amount > maxHealth) health = maxHealth;
+
+        if (health + amount > maxHealth)
+        {
+            health = maxHealth;
+        }
         else health += amount;
 
         hud.OnUpdateHUD?.Invoke();
@@ -66,16 +87,34 @@ public class HealthSystem : MonoBehaviour
         if(healthRegenCounter < healthRegenTimer){
             healthRegenCounter += Time.deltaTime;
         }
-        else if(health < maxHealth){
-            health += Time.deltaTime * healthRegenSpeed;
-            if(health > maxHealth) health = maxHealth;
-            hud.OnUpdateHUD?.Invoke();
-        }
         else if (shield < maxShield)
         {
             shield += Time.deltaTime * shieldRegenSpeed;
-            if (shield > maxShield) shield = maxShield;
+            if (shield > maxShield)
+            {
+                shield = maxShield;
+                VignnetteEffect(0.5f, Color.green);
+            }
             hud.OnUpdateHUD?.Invoke();
+        }
+        
+        if (fadingIn || fadingOut)
+        {
+            vignetteTimer += Time.deltaTime;
+            float t = vignetteTimer / vignetteTime;
+            if (fadingOut)
+            {
+                vignette.intensity.value = Mathf.Lerp(0.5f, 0f, t);
+            }
+            else
+                vignette.intensity.value = Mathf.Lerp(0f, 0.5f, t*2f);
+            
+            if(vignetteTimer >= vignetteTime)
+            {
+                fadingIn = false;
+                fadingOut = false;
+                vignetteTimer = 0f;
+            }
         }
         
         #if UNITY_EDITOR
@@ -88,6 +127,22 @@ public class HealthSystem : MonoBehaviour
         #endif
     }
 
+    private void VignnetteEffect(float time, Color color)
+    {
+        vignetteTime = time;
+        vignette.color.value = color;
+        vignette.active = true;
+        fadingIn = true;
+        StartCoroutine("EndDamageVignette");
+    }
+    
+    IEnumerator EndDamageVignette()
+    {
+        yield return new WaitForSeconds(vignetteTime);
+        fadingIn = false;
+        fadingOut = true;
+    }
+    
     [ContextMenu("Take Damage")]
     void TestTakeDamage(){ TakeDamage(10f); }
 

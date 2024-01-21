@@ -12,6 +12,7 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField] private float shootingSpeed = 1f; // Passar isso para gunTemplate?
     [SerializeField] private float critMultiplier = 2f;
     private bool isShooting = false;
+    private bool isReloading = false;
     private float cooldownCounter = 0f;
 
     [Header("Shooting")]
@@ -71,10 +72,11 @@ public class PlayerShoot : MonoBehaviour
 
         */
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            if(cooldownCounter <= 0 && !isShooting && !isOnMenu){
+            Debug.Log("Cooldwn: " + cooldownCounter + " | isShooting: " + isShooting + " | isReloading: " + isReloading + " | isOnMenu: " + isOnMenu + "Current Ammo: " + gun.magCurrentAmmo);
+            if(cooldownCounter <= 0 && !isShooting && !isReloading &&!isOnMenu){
                 if(gun.magCurrentAmmo > 0){
                     isShooting = true;
-                    cooldownCounter = shootingSpeed;
+                    cooldownCounter = gun.fireRate;
 
                     gun.bulletsLeft = gun.bulletsPerShot;
                     Shoot();
@@ -186,6 +188,7 @@ public class PlayerShoot : MonoBehaviour
     
     public void ChangeWeapon(GunTemplate newGun)
     {
+        Debug.Log("New Gun " + newGun + " selected + " + newGun.fireRate);
         gun = newGun;
     }
 }

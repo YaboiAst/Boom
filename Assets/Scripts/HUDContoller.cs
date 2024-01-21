@@ -56,6 +56,11 @@ public class HUDContoller : MonoBehaviour
             yield return null;
         }
     }
+    
+    public void ChangeWeapon(GunTemplate newGun){
+        playerAmmo = newGun;
+        UpdateHUD();
+    }
 
 
 }
