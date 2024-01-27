@@ -9,8 +9,10 @@ public class MouseLook : MonoBehaviour
     private float rotationX;
 
     private Transform playerT;
-    // Start is called before the first frame update
-    void Start()
+
+    private bool ignoreMouseInput = false;
+
+    public void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -30,5 +32,9 @@ public class MouseLook : MonoBehaviour
         transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
 
         playerT.Rotate(Vector3.up * mouseX);
+    }
+
+    public void AddRecoil(float recoilAmount){
+        rotationX = Mathf.Lerp(rotationX, rotationX - recoilAmount, 1f);
     }
 }

@@ -57,10 +57,8 @@ public class HUDContoller : MonoBehaviour
         }
     }
     
-    public void ChangeWeapon(GunTemplate newGun){
-        playerAmmo = newGun;
-        UpdateHUD();
+    public void UpdatePlayerAmmo(){
+        playerAmmo = playerInfo.GetComponent<PlayerShoot>().GetGun();
+        OnUpdateHUD?.Invoke();
     }
-
-
 }

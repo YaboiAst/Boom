@@ -61,7 +61,7 @@ public class HealthSystem : MonoBehaviour
         hud.OnUpdateHUD?.Invoke();
     }
 
-    private void Heal(float amount){
+    public void Heal(float amount){
         if(health == maxHealth) return;
 
         if (health + amount > maxHealth)
@@ -73,7 +73,7 @@ public class HealthSystem : MonoBehaviour
         hud.OnUpdateHUD?.Invoke();
     }
 
-    private void Shield(float amount){
+    public void Shield(float amount){
         if(shield == 50) return;
 
         if(shield + amount > 50) shield = 50;

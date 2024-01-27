@@ -15,26 +15,36 @@ public class WeaponWheelController : MonoBehaviour
     [SerializeField] private HUDContoller hudContoller;
     public MouseLook mouseLook;
 
+    private Quaternion savedPlayerRotation;
+
     // Update is called once per frame
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Tab))
         {
             weaponWheelSelected = !weaponWheelSelected;
+
+            if(weaponWheelSelected)
+            {
+                Select();
+            }
+            else
+            {
+                Deselect();
+            }
         }
 
-        if(weaponWheelSelected)
-        {
-            Select();
-        }
-        else
-        {
-            Deselect();
+
+        if(Input.GetButtonDown("Fire1")){
+            Invoke("UnlockLook", .5f);
         }
     }
 
     public void Select()
     {
+        savedPlayerRotation = playerShoot.gameObject.transform.rotation;
+
+
         mouseLook.enabled = false;
         playerShoot.isOnMenu = true;
         Cursor.lockState = CursorLockMode.Confined;
@@ -48,6 +58,8 @@ public class WeaponWheelController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
         animator.SetBool("weaponWheelSelected", false);
+
+        playerShoot.gameObject.transform.rotation = savedPlayerRotation;
     }
 
     public void UnlockLook()
@@ -59,7 +71,6 @@ public class WeaponWheelController : MonoBehaviour
     public void ChangeWeapon(GunTemplate newGun)
     {
         playerShoot.ChangeWeapon(newGun);
-        hudContoller.ChangeWeapon(newGun);
     }
 
 }

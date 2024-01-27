@@ -15,6 +15,7 @@ public class GunTemplate
     public float reloadTime = 1f;
     public int bulletsPerShot = 1; 
     public float spread;
+    public float recoil;
     public float zoomFOV = 60f;
     public bool canHoldFire;
 

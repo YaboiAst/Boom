@@ -11,7 +11,7 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField] private GunTemplate gun;
     [SerializeField] private float shootingSpeed = 1f; // Passar isso para gunTemplate?
     [SerializeField] private float critMultiplier = 2f;
-    private bool isShooting = false;
+    [HideInInspector] public bool isShooting = false;
     private bool isReloading = false;
     private float cooldownCounter = 0f;
 
@@ -20,6 +20,7 @@ public class PlayerShoot : MonoBehaviour
     public GameObject bullet;
     private Vector3 shotDirection;
     private bool shootInput;
+    private MouseLook recoilController;
 
     [Header("Visual Effects")]
     [SerializeField] private GameObject bloodParticles;
@@ -39,8 +40,9 @@ public class PlayerShoot : MonoBehaviour
     private void Start() {
         mainCam = GetComponentInChildren<Camera>();
         aim = new Vector3 (Screen.width / 2, Screen.height / 2, 0f);
-
         baseFOV = mainCam.fieldOfView;
+
+        recoilController = mainCam.GetComponent<MouseLook>();
     }
 
     void Update()
@@ -75,7 +77,10 @@ public class PlayerShoot : MonoBehaviour
             - Atualizar HUD
 
         */
-        if(Input.GetKeyDown(KeyCode.Mouse0)){
+        if(gun.canHoldFire) shootInput = Input.GetKey(KeyCode.Mouse0);
+        else shootInput = Input.GetKeyDown(KeyCode.Mouse0);
+
+        if(shootInput){
             Debug.Log("Cooldwn: " + cooldownCounter + " | isShooting: " + isShooting + " | isReloading: " + isReloading + " | isOnMenu: " + isOnMenu + "Current Ammo: " + gun.magCurrentAmmo);
             if(cooldownCounter <= 0 && !isShooting && !isReloading &&!isOnMenu){
                 if(gun.magCurrentAmmo > 0){
@@ -84,6 +89,10 @@ public class PlayerShoot : MonoBehaviour
 
                     gun.bulletsLeft = gun.bulletsPerShot;
                     Shoot();
+                }
+                else{
+                    isReloading = true;
+                    Invoke("Reload", 2f);
                 }
             }
         }
@@ -157,12 +166,15 @@ public class PlayerShoot : MonoBehaviour
         gun.magCurrentAmmo--;
         gun.bulletsLeft--;
 
+        /* Adiciona recuo*/
+        recoilController.AddRecoil(gun.recoil);
+
         hud.OnUpdateHUD?.Invoke();
 
         /* Burst */
         if(gun.bulletsLeft > 0 && gun.magCurrentAmmo > 0)
             Invoke("Shoot", gun.burstRate);
-        else if(gun.bulletsLeft == 0){
+        else if(gun.bulletsLeft == 0 || gun.magCurrentAmmo == 0){
             isShooting = false;
         }
     }
@@ -178,6 +190,10 @@ public class PlayerShoot : MonoBehaviour
         }
         isReloading = false;
         hud.OnUpdateHUD?.Invoke();
+    }
+
+    public void GetAmmo(int amount){
+        gun.totalAmmo += amount;
     }
 
     private void ZoomIn(){
@@ -206,5 +222,7 @@ public class PlayerShoot : MonoBehaviour
     {
         Debug.Log("New Gun " + newGun + " selected + " + newGun.fireRate);
         gun = newGun;
+        Reload();
+        hud.UpdatePlayerAmmo();
     }
 }

@@ -17,7 +17,7 @@ public class Melee : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F) && Paw.activeSelf == false){
+        if(Input.GetKeyDown(KeyCode.F) && Paw.activeSelf == false && gameObject.CompareTag("Player")){
             Paw.SetActive(true);
 
             Collider[] enemiesInMeleeRange = Physics.OverlapSphere(transform.position + transform.forward * meleeRange, meleeRange, whatIsEnemie);
@@ -48,8 +48,6 @@ public class Melee : MonoBehaviour
 
         Invoke("StopMelee", 1f);
     }
-    
-    
 
     void StopMelee(){
         Paw.SetActive(false);
